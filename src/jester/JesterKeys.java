@@ -1,0 +1,113 @@
+package jester;
+
+import java.awt.event.KeyEvent;
+
+public class JesterKeys {
+
+    // Arrow Keys
+    public static final int LEFT = KeyEvent.VK_LEFT;
+    public static final int RIGHT = KeyEvent.VK_RIGHT;
+    public static final int UP = KeyEvent.VK_UP;
+    public static final int DOWN = KeyEvent.VK_DOWN;
+
+    // Space and Enter
+    public static final int SPACE = KeyEvent.VK_SPACE;
+    public static final int ENTER = KeyEvent.VK_ENTER;
+
+    // Escape, Tab, and Backspace
+    public static final int ESCAPE = KeyEvent.VK_ESCAPE;
+    public static final int TAB = KeyEvent.VK_TAB;
+    public static final int BACKSPACE = KeyEvent.VK_BACK_SPACE;
+
+    // Alphabet keys (A-Z)
+    public static final int A = KeyEvent.VK_A;
+    public static final int B = KeyEvent.VK_B;
+    public static final int C = KeyEvent.VK_C;
+    public static final int D = KeyEvent.VK_D;
+    public static final int E = KeyEvent.VK_E;
+    public static final int F = KeyEvent.VK_F;
+    public static final int G = KeyEvent.VK_G;
+    public static final int H = KeyEvent.VK_H;
+    public static final int I = KeyEvent.VK_I;
+    public static final int J = KeyEvent.VK_J;
+    public static final int K = KeyEvent.VK_K;
+    public static final int L = KeyEvent.VK_L;
+    public static final int M = KeyEvent.VK_M;
+    public static final int N = KeyEvent.VK_N;
+    public static final int O = KeyEvent.VK_O;
+    public static final int P = KeyEvent.VK_P;
+    public static final int Q = KeyEvent.VK_Q;
+    public static final int R = KeyEvent.VK_R;
+    public static final int S = KeyEvent.VK_S;
+    public static final int T = KeyEvent.VK_T;
+    public static final int U = KeyEvent.VK_U;
+    public static final int V = KeyEvent.VK_V;
+    public static final int W = KeyEvent.VK_W;
+    public static final int X = KeyEvent.VK_X;
+    public static final int Y = KeyEvent.VK_Y;
+    public static final int Z = KeyEvent.VK_Z;
+
+    // Function keys (F1-F12)
+    public static final int F1 = KeyEvent.VK_F1;
+    public static final int F2 = KeyEvent.VK_F2;
+    public static final int F3 = KeyEvent.VK_F3;
+    public static final int F4 = KeyEvent.VK_F4;
+    public static final int F5 = KeyEvent.VK_F5;
+    public static final int F6 = KeyEvent.VK_F6;
+    public static final int F7 = KeyEvent.VK_F7;
+    public static final int F8 = KeyEvent.VK_F8;
+    public static final int F9 = KeyEvent.VK_F9;
+    public static final int F10 = KeyEvent.VK_F10;
+    public static final int F11 = KeyEvent.VK_F11;
+    public static final int F12 = KeyEvent.VK_F12;
+
+    // Modifier keys (Shift, Control, Alt)
+    public static final int SHIFT = KeyEvent.VK_SHIFT;
+    public static final int CONTROL = KeyEvent.VK_CONTROL;
+    public static final int ALT = KeyEvent.VK_ALT;
+
+    // Numbers (0-9)
+    public static final int ZERO = KeyEvent.VK_0;
+    public static final int ONE = KeyEvent.VK_1;
+    public static final int TWO = KeyEvent.VK_2;
+    public static final int THREE = KeyEvent.VK_3;
+    public static final int FOUR = KeyEvent.VK_4;
+    public static final int FIVE = KeyEvent.VK_5;
+    public static final int SIX = KeyEvent.VK_6;
+    public static final int SEVEN = KeyEvent.VK_7;
+    public static final int EIGHT = KeyEvent.VK_8;
+    public static final int NINE = KeyEvent.VK_9;
+
+    // Punctuation keys
+    public static final int COMMA = KeyEvent.VK_COMMA;
+    public static final int PERIOD = KeyEvent.VK_PERIOD;
+    public static final int SEMICOLON = KeyEvent.VK_SEMICOLON;
+    public static final int COLON = KeyEvent.VK_COLON;
+    public static final int QUOTE = KeyEvent.VK_QUOTE;
+    public static final int SLASH = KeyEvent.VK_SLASH;
+    public static final int BACKSLASH = KeyEvent.VK_BACK_SLASH;
+//    public static final int LEFT_BRACKET = KeyEvent.VK_LEFT_BRACKET;
+//    public static final int RIGHT_BRACKET = KeyEvent.VK_RIGHT_BRACKET;
+    public static final int EQUALS = KeyEvent.VK_EQUALS;
+
+    // Misc keys
+    public static final int CAPS_LOCK = KeyEvent.VK_CAPS_LOCK;
+    public static final int NUM_LOCK = KeyEvent.VK_NUM_LOCK;
+    public static final int SCROLL_LOCK = KeyEvent.VK_SCROLL_LOCK;
+    public static final int PRINT_SCREEN = KeyEvent.VK_PRINTSCREEN;
+    public static final int PAUSE = KeyEvent.VK_PAUSE;
+    public static final int INSERT = KeyEvent.VK_INSERT;
+    public static final int HOME = KeyEvent.VK_HOME;
+    public static final int PAGE_UP = KeyEvent.VK_PAGE_UP;
+    public static final int DELETE = KeyEvent.VK_DELETE;
+    public static final int END = KeyEvent.VK_END;
+    public static final int PAGE_DOWN = KeyEvent.VK_PAGE_DOWN;
+    public static final int SHIFT_LEFT = KeyEvent.VK_SHIFT;
+    public static final int SHIFT_RIGHT = KeyEvent.VK_RIGHT;
+
+    // Arrow keys (repeated for emphasis)
+    public static final int LEFT_ARROW = KeyEvent.VK_LEFT;
+    public static final int RIGHT_ARROW = KeyEvent.VK_RIGHT;
+    public static final int UP_ARROW = KeyEvent.VK_UP;
+    public static final int DOWN_ARROW = KeyEvent.VK_DOWN;
+}

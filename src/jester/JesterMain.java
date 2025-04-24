@@ -88,6 +88,7 @@ public class JesterMain extends Canvas implements Runnable {
         if (currentScene != null) {
             currentScene.update(dt); // Pass delta time
         }
+        JesterKeyboard.endFrame();
     }
 
     // Renders the current scene
