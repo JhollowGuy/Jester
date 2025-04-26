@@ -67,9 +67,10 @@ public class JesterKeyboard implements KeyListener {
     }
 
     /**
-     * Call this at the end of each frame to clear all one-time presses.
+     * Call this at the end of the frame to clear all one-time presses.
      * Must be called once per game loop iteration.
      */
+    // Call this at the end of each frame in the engine to clear pressed states
     public static void endFrame() {
         keysPressed.clear();
     }

@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 
-
 public class JesterMain extends Canvas implements Runnable {
 
     private static final int WIDTH = 800;
@@ -44,7 +43,7 @@ public class JesterMain extends Canvas implements Runnable {
 
     // Stops the game loop
     public synchronized void stop() {
-//        if (!running) return;
+        if (!running) return; // Prevent stopping if already stopped
         running = false;
         try {
             gameThread.join();
@@ -61,7 +60,13 @@ public class JesterMain extends Canvas implements Runnable {
         long timer = System.currentTimeMillis();
         int frames = 0;
 
-        currentScene.init(); // Run scene's load method
+        // Check if currentScene is initialized
+        if (currentScene != null) {
+            currentScene.init(); // Run scene's load method
+        } else {
+            System.err.println("Error: currentScene is not initialized.");
+            return; // Exit if currentScene is null
+        }
 
         while (running) {
             long now = System.nanoTime();
@@ -127,6 +132,14 @@ public class JesterMain extends Canvas implements Runnable {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         requestFocus(); // so input works
+
+//        // Add a window listener for graceful exit
+//        frame.addWindowListener(new WindowAdapter() {
+//            @Override
+//            public void windowClosing(WindowEvent e) {
+//                stop(); // Stop the game loop when the window is closed
+//            }
+//        });
     }
 
     // The dev calls this from their game to start everything
