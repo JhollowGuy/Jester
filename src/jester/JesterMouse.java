@@ -78,7 +78,7 @@ public class JesterMouse implements MouseListener, MouseMotionListener {
      * @param button the button to check (e.g., MouseEvent.BUTTON1)
      * @return true if the button is down
      */
-    public static boolean isDown(int button) {
+    public static synchronized boolean isDown(int button) {
         return buttonsDown.contains(button);
     }
 
