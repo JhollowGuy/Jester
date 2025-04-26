@@ -8,6 +8,7 @@ import java.util.HashSet;
 /**
  * JesterMouse provides mouse position and button input tracking for the Jester engine.
  * It tracks current mouse coordinates and which mouse buttons are held down.
+ * This class is responsible for handling mouse events and providing access to mouse state.
  */
 public class JesterMouse implements MouseListener, MouseMotionListener {
 
@@ -60,7 +61,7 @@ public class JesterMouse implements MouseListener, MouseMotionListener {
      * Gets the current x coordinate of the mouse.
      * @return current x position
      */
-    public static int getX() {
+    public static synchronized int getX() {
         return x;
     }
 
@@ -68,7 +69,7 @@ public class JesterMouse implements MouseListener, MouseMotionListener {
      * Gets the current y coordinate of the mouse.
      * @return current y position
      */
-    public static int getY() {
+    public static synchronized int getY() {
         return y;
     }
 
@@ -79,6 +80,14 @@ public class JesterMouse implements MouseListener, MouseMotionListener {
      */
     public static boolean isDown(int button) {
         return buttonsDown.contains(button);
+    }
+
+    /**
+     * Resets the mouse state at the beginning of each frame.
+     * This clears the set of pressed buttons.
+     */
+    public static synchronized void reset() {
+        buttonsDown.clear();
     }
 
     // These events are not used but must be implemented
