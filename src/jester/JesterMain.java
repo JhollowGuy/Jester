@@ -60,6 +60,10 @@ public class JesterMain extends Canvas implements Runnable {
         long timer = System.currentTimeMillis();
         int frames = 0;
 
+        // Define target FPS and calculate target frame duration
+        final int TARGET_FPS = 60;
+        final long TARGET_FRAME_TIME = 1000000000 / TARGET_FPS; // in nanoseconds
+
         // Check if currentScene is initialized
         if (currentScene != null) {
             currentScene.init(); // Run scene's load method
@@ -70,18 +74,32 @@ public class JesterMain extends Canvas implements Runnable {
 
         while (running) {
             long now = System.nanoTime();
-            float dt = (now - lastTime) / 1_000_000_000f; // Convert to seconds
+            // float dt = (now - lastTime) / 1_000_000_000f; // Convert to seconds
+            long frameTime = now - lastTime; // Time taken for this frame
             lastTime = now;
 
-            update(dt); // <--- NEW
-            render();   // <--- same
+            // Update and render
+            //update(dt); // <--- NEW
+            update((float) frameTime / 1_000_000_000f); // Pass delta time in seconds
+            render();   // <--- same, Render the game
 
             frames++;
 
+            // Update the title with FPS every second
             if (System.currentTimeMillis() - timer >= 1000) {
-                //frame.setTitle(TITLE + " | FPS: " + frames);
-                frames = 0;
-                timer += 1000;
+                frame.setTitle(TITLE + " | FPS: " + frames);
+                frames = 0; // Reset frames count
+                timer += 1000; // Move the timer forward
+            }
+
+            // Calculate how long to sleep to maintain the target FPS
+            long sleepTime = (TARGET_FRAME_TIME - (System.nanoTime() - now)) / 1_000_000; // Convert to milliseconds
+            if (sleepTime > 0) {
+                try {
+                    Thread.sleep(sleepTime); // Sleep for the remaining time
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // Restore interrupted status
+                }
             }
         }
 

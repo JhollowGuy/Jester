@@ -109,11 +109,7 @@ public class JesterGraphics {
      */
     public void drawRoundRect(String mode, int x, int y, int width, int height, int arcWidth, int arcHeight, Color color) {
         g.setColor(color);
-        if ("fill".equalsIgnoreCase(mode)) {
-            g.fill(new RoundRectangle2D.Float(x, y, width, height, arcWidth, arcHeight));
-        } else if ("line".equalsIgnoreCase(mode)) {
-            g.draw(new RoundRectangle2D.Float(x, y, width, height, arcWidth, arcHeight));
-        }
+        g.fill(new RoundRectangle2D.Float(x, y, width, height, arcWidth, arcHeight));
     }
 
     /**

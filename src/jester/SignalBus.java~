@@ -10,16 +10,14 @@ import java.util.function.Consumer;
  * The SignalBus class provides a simple event bus system for the Jester framework.
  * It allows components to subscribe to signals and emit events without direct coupling.
  */
-public class SignalBus {
-    // Map to hold signal names and their corresponding listeners
-    private static final Map<String, Set<Consumer<?>>> listeners = new HashMap<>();
+public class SignalBus<T> {
+    private static final Map<String, Set<Consumer<T>>> listeners = new HashMap<>();
 
     /**
      * Subscribes a callback to a specific signal.
      *
      * @param signalName The name of the signal to listen for.
      * @param callback The callback to invoke when the signal is emitted.
-     * @param <T> The type of data the callback accepts.
      */
     public static <T> void on(String signalName, Consumer<T> callback) {
         listeners.computeIfAbsent(signalName, k -> new HashSet<>()).add(callback);
@@ -30,9 +28,8 @@ public class SignalBus {
      *
      * @param signalName The name of the signal to stop listening to.
      * @param callback The callback to remove from the signal.
-     * @param <T> The type of data the callback accepts.
      */
-    public static <T> void off(String signalName, Consumer<T> callback) {
+    public static void off(String signalName, Consumer<Object> callback) {
         if (listeners.containsKey(signalName)) {
             listeners.get(signalName).remove(callback);
         }
@@ -43,13 +40,11 @@ public class SignalBus {
      *
      * @param signalName The name of the signal to emit.
      * @param data The data to pass to the callbacks.
-     * @param <T> The type of data being emitted.
      */
-    @SuppressWarnings("unchecked")
     public static <T> void emit(String signalName, T data) {
         if (listeners.containsKey(signalName)) {
-            for (Consumer<?> callback : listeners.get(signalName)) {
-                ((Consumer<T>) callback).accept(data); // Safe cast
+            for (Consumer<T> callback : listeners.get(signalName)) {
+                callback.accept(data);
             }
         }
     }
