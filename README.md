@@ -1,4 +1,4 @@
-# Jester
+# 🎭  Jester
 
  A simple, beginner-friendly game framework for Java. Built with the goal of helping beginner game developers get started quickly, this framework provides all the basic tools needed to create 2D games, without the complexity of bigger game engines.
 

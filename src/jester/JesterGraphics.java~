@@ -10,6 +10,7 @@ import java.awt.geom.*;
 public class JesterGraphics {
     private Graphics2D g;
     private Font defaultFont; // Default font for text rendering
+    private static JesterFilter defaultFilter = JesterFilter.VECTOR;
 
     /**
      * Constructor that initializes the default font.
@@ -25,6 +26,14 @@ public class JesterGraphics {
     public void setGraphics(Graphics2D g) {
         this.g = g;
         g.setFont(defaultFont); // Set the default font for the Graphics2D context
+    }
+
+    /**
+     * Gets the current Graphics2D context.
+     * @return The current Graphics2D context.
+     */
+    public Graphics2D getGraphics() {
+        return g; // Return the stored Graphics2D context
     }
 
     /**
@@ -109,24 +118,41 @@ public class JesterGraphics {
      */
     public void drawRoundRect(String mode, int x, int y, int width, int height, int arcWidth, int arcHeight, Color color) {
         g.setColor(color);
-        g.fill(new RoundRectangle2D.Float(x, y, width, height, arcWidth, arcHeight));
+        if ("fill".equalsIgnoreCase(mode)) {
+            g.fill(new RoundRectangle2D.Float(x, y, width, height, arcWidth, arcHeight));
+        } else if ("line".equalsIgnoreCase(mode)) {
+            g.draw(new RoundRectangle2D.Float(x, y, width, height, arcWidth, arcHeight));
+        }
     }
 
+//    /**
+//     * Draws a line connecting multiple points.
+//     * @param color The color of the line.
+//     * @param points An array of integers representing point coordinates.
+//     */
+//    public void drawLine(Color color, int... points) {
+//        if (points.length < 4) {
+//            throw new IllegalArgumentException("At least two points (x1, y1, x2, y2) are required.");
+//        }
+//        g.setColor(color); // Set default color or pass as parameter
+//        //g.drawLine(x1, y1, x2, y2);
+//        // g.draw(new Line2D.Float(x1, y1, x2, y2));
+//        for (int i = 0; i < points.length - 2; i += 2) {
+//            g.drawLine(points[i], points[i + 1], points[i + 2], points[i + 3]);
+//        }
+//    }
+
     /**
-     * Draws a line connecting multiple points.
-     * @param color The color of the line.
-     * @param points An array of integers representing point coordinates.
+     * Draws a line from (x1,y1) to (x2,y2)
+     * @param x1 Starting x coordinate
+     * @param y1 Starting y coordinate
+     * @param x2 Ending x coordinate
+     * @param y2 Ending y coordinate
+     * @param color The color of the line
      */
-    public void drawLine(Color color, int... points) {
-        if (points.length < 4) {
-            throw new IllegalArgumentException("At least two points (x1, y1, x2, y2) are required.");
-        }
-        g.setColor(color); // Set default color or pass as parameter
-        //g.drawLine(x1, y1, x2, y2);
-        // g.draw(new Line2D.Float(x1, y1, x2, y2));
-        for (int i = 0; i < points.length - 2; i += 2) {
-            g.drawLine(points[i], points[i + 1], points[i + 2], points[i + 3]);
-        }
+    public void drawLine(int x1, int y1, int x2, int y2, Color color) {
+        g.setColor(color);
+        g.drawLine(x1, y1, x2, y2);
     }
 
     /**
@@ -227,4 +253,69 @@ public class JesterGraphics {
         g.setColor(color);
         g.fillPolygon(xPoints, yPoints, points.length);
     }
+
+    /**
+     * Translates the graphics context by the specified coordinates
+     * @param dx The distance to translate along X axis
+     * @param dy The distance to translate along Y axis
+     */
+    public void translate(float dx, float dy) {
+        g.translate(dx, dy);
+    }
+
+    /**
+     * Resets all transformations to the identity transform
+     */
+    public void resetTransform() {
+        g.setTransform(new AffineTransform());
+    }
+
+    /**
+     * Applies camera transformations
+     * @param camera The camera to apply transformations from
+     */
+    public void applyCameraTransform(JesterCamera camera) {
+        translate((float) Jester.window.getWidth() /2 - camera.getX(),
+                (float) Jester.window.getHeight() /2 - camera.getY());
+    }
+    
+    /**
+     * Sets the default filter for JesterGraphics.
+     * @param filter The filter to set.
+     */
+    public static void setDefaultFilter(JesterFilter filter) {
+        defaultFilter = filter;
+    }
+
+    /**
+     * Applies the specified filter to the graphics context.
+     * @param g The graphics context to apply the filter to.
+     */
+    public static void applyFilter(Graphics2D g) {
+        if (defaultFilter == JesterFilter.PIXEL) {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        } else {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        }
+    }
+
+//    /**
+//     * Applies the camera transformation to the graphics context.
+//     * @param camera The camera to apply transformations from.
+//     */
+//    public void applyCameraTransform(JesterCamera camera) {
+//        // Create a new transformation using JesterTransform
+//        JesterTransform cameraTransform = new JesterTransform();
+//        cameraTransform.setTransformation((float) camera.getX(), (float) camera.getY(), camera.getRotation(), camera.getZoom(), camera.getZoom());
+//
+//        // Create an AffineTransform from the matrix
+//        float[] matrix = cameraTransform.getMatrix();
+//        AffineTransform transform = new AffineTransform();
+//        transform.setTransform(matrix[0], matrix[1], matrix[3], matrix[4], matrix[6], matrix[7]);
+//
+//        // Apply the transformation
+//        g.setTransform(transform);
+//    }
 }

@@ -1,0 +1,252 @@
+//package jester;
+//
+//import java.awt.*;
+//import java.awt.geom.AffineTransform;
+//
+///**
+// * JesterCamera handles the camera functionality for the Jester framework.
+// * It allows for panning, zooming, and transforming the rendering context.
+// */
+//public class JesterCamera {
+//    private JesterVector2 position; // Camera position
+//    private float scale; // Camera zoom level
+//    private float rotation; // Camera rotation
+//    private JesterTransform transform; // Transformation object
+//
+//    /**
+//     * Constructs a new JesterCamera with the specified initial position, zoom, and rotation.
+//     * @param x The initial x-coordinate of the camera.
+//     * @param y The initial y-coordinate of the camera.
+//     * @param scale The initial zoom level of the camera.
+//     * @param rotation The initial rotation angle of the camera.
+//     */
+//    public JesterCamera(float x, float y, float scale, float rotation) {
+//        this.position = new JesterVector2(x, y);
+//        this.scale = scale;
+//        this.rotation = rotation;
+//        this.transform = new JesterTransform(); // Initialize the transformation
+//        updateTransform(); // Set the initial transformation
+//    }
+//
+//    /**
+//     * Updates the transformation matrix based on the current position, rotation, and scale.
+//     */
+//    private void updateTransform() {
+//        transform.setTransformation((float) position.getX(), (float) position.getY(), rotation, scale, scale);
+//    }
+//
+//    /**
+//     * Sets the camera to look at a specific position.
+//     * @param x The x-coordinate to look at.
+//     * @param y The y-coordinate to look at.
+//     */
+//    public void lookAt(float x, float y) {
+//        this.position = new JesterVector2(x, y); // Update position to look at
+//        updateTransform(); // Update the transformation
+//    }
+//
+//    /**
+//     * Sets the position of the camera.
+//     * @param x The x-coordinate of the camera.
+//     * @param y The y-coordinate of the camera.
+//     */
+//    public void setPosition(float x, float y) {
+//        this.position = new JesterVector2(x, y);
+//        updateTransform(); // Update the transformation after setting the position
+//    }
+//
+//    /**
+//     * Moves the camera by the specified amounts.
+//     * @param dx The amount to move in the x direction.
+//     * @param dy The amount to move in the y direction.
+//     */
+//    public void move(float dx, float dy) {
+//        this.position = this.position.add(new JesterVector2(dx, dy)); // Update position
+//        updateTransform(); // Update the transformation
+//    }
+//
+//    /**
+//     * Zooms the camera by the specified factor.
+//     * @param factor The zoom factor (e.g., 1.1 for zooming in, 0.9 for zooming out).
+//     */
+//    public void zoom(float factor) {
+//        this.scale *= factor;
+//        updateTransform(); // Update the transformation
+//    }
+//
+//    /**
+//     * Zooms the camera to the specified zoom level.
+//     * @param zoom The zoom level.
+//     */
+//    public void zoomTo(float zoom) {
+//        this.scale = zoom;
+//    }
+//
+//    /**
+//     * Rotates the camera by the specified angle in radians.
+//     * @param angle The angle to rotate the camera.
+//     */
+//    public void rotate(float angle) {
+//        this.rotation += angle;
+//        updateTransform(); // Update the transformation
+//    }
+//
+//    /**
+//     * Rotates the camera to the specified angle in radians.
+//     * @param radians The angle to rotate the camera.
+//     */
+//    public void rotateTo(float radians) {
+//        this.rotation = radians;
+//    }
+//
+//    /**
+//     * Applies the camera transformations to the graphics context.
+//     * @param g The JesterGraphics context to apply the transformations to.
+//     */
+//    public void applyTransform(JesterGraphics g) {
+//        // Apply the transformation using JesterTransform
+//        g.applyCameraTransform(this); // Use the method in JesterGraphics to apply transformations
+//    }
+//
+//    /**
+//     * Converts world coordinates to camera coordinates.
+//     * @param worldX The x-coordinate in world space.
+//     * @param worldY The y-coordinate in world space.
+//     * @return An array containing the camera coordinates [cameraX, cameraY].
+//     */
+//    public float[] worldToCamera(float worldX, float worldY) {
+//        float cameraX = (float) ((worldX - position.getX()) / scale);
+//        float cameraY = (float) ((worldY - position.getY()) / scale);
+//        return new float[]{cameraX, cameraY};
+//    }
+//
+//    /**
+//     * Converts camera coordinates to world coordinates.
+//     * @param cameraX The x-coordinate in camera space.
+//     * @param cameraY The y-coordinate in camera space.
+//     * @return An array containing the world coordinates [worldX, worldY].
+//     */
+//    public float[] cameraToWorld(float cameraX, float cameraY) {
+//        float worldX = (cameraX * scale) + (float) position.getX();
+//        float worldY = (cameraY * scale) + (float) position.getY();
+//        return new float[]{worldX, worldY};
+//    }
+//
+//    /**
+//     * Transforms world coordinates to screen coordinates.
+//     * @param world The world coordinates as a JesterVector2.
+//     * @param screenWidth The width of the screen.
+//     * @param screenHeight The height of the screen.
+//     * @return The screen coordinates as a JesterVector2.
+//     */
+//    public JesterVector2 worldToScreen(JesterVector2 world, int screenWidth, int screenHeight) {
+//        float cx = screenWidth / 2f;
+//        float cy = screenHeight / 2f;
+//
+//        // Translate
+//        float dx = (float) (world.getX() - position.getX());
+//        float dy = (float) (world.getY() - position.getY());
+//
+//        // Rotate
+//        float cos = (float) Math.cos(-rotation);
+//        float sin = (float) Math.sin(-rotation);
+//        float rx = cos * dx - sin * dy;
+//        float ry = sin * dx + cos * dy;
+//
+//        // Zoom and center
+//        return new JesterVector2(rx * scale + cx, ry * scale + cy);
+//    }
+//
+//    /**
+//     * Transforms screen coordinates to world coordinates.
+//     * @param screen The screen coordinates as a JesterVector2.
+//     * @param screenWidth The width of the screen.
+//     * @param screenHeight The height of the screen.
+//     * @return The world coordinates as a JesterVector2.
+//     */
+//    public JesterVector2 screenToWorld(JesterVector2 screen, int screenWidth, int screenHeight) {
+//        float cx = screenWidth / 2f;
+//        float cy = screenHeight / 2f;
+//
+//        float dx = (float) (screen.getX() - cx) / scale;
+//        float dy = (float) (screen.getY() - cy) / scale;
+//
+//        float cos = (float) Math.cos(rotation);
+//        float sin = (float) Math.sin(rotation);
+//        float rx = cos * dx - sin * dy;
+//        float ry = sin * dx + cos * dy;
+//
+//        return new JesterVector2(rx + position.getX(), ry + position.getY());
+//    }
+//
+//    /**
+//     * Inner class for smooth camera movements.
+//     */
+//    public static class CameraSmooth {
+//        public static float[] linear(float targetX, float targetY, float currentX, float currentY, float speed, float dt) {
+//            float dx = targetX - currentX;
+//            float dy = targetY - currentY;
+//            float distance = (float) Math.sqrt(dx * dx + dy * dy);
+//
+//            if (distance < 1e-6) {
+//                return new float[]{currentX, currentY}; // No movement needed
+//            }
+//
+//            float moveDistance = Math.min(speed * dt, distance);
+//            float ratio = moveDistance / distance;
+//
+//            return new float[]{
+//                    currentX + dx * ratio,
+//                    currentY + dy * ratio
+//            };
+//        }
+//    }
+//
+//    // Getters for position, zoom, and rotation
+//    public float getX() {
+//        return (float) position.getX();
+//    }
+//
+//    public float getY() {
+//        return (float) position.getY();
+//    }
+//
+//    public float getZoom() {
+//        return scale;
+//    }
+//
+//    public float getRotation() {
+//        return rotation;
+//    }
+//}
+
+package jester;
+
+public class JesterCamera {
+    private float x;
+    private float y;
+    private float scale;
+
+    public JesterCamera() {
+        this.x = 0;
+        this.y = 0;
+        this.scale = 1.0f;
+    }
+
+    public void lookAt(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public void attach(JesterGraphics g) {
+        g.applyCameraTransform(this);
+    }
+
+    public void detach(JesterGraphics g) {
+        g.resetTransform();
+    }
+
+    public float getX() { return x; }
+    public float getY() { return y; }
+    public float getScale() { return scale; }
+}

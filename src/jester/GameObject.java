@@ -45,9 +45,11 @@ public class GameObject {
     /**
      * Renders the game object using the specified graphics context.
      * This method should be overridden in subclasses to implement specific rendering logic.
-     * @param g The graphics context used for rendering.
+     *
+     * @param g      The graphics context used for rendering.
+     * @param camera
      */
-    public void render(JesterGraphics g) {
+    public void render(JesterGraphics g, JesterCamera camera) {
         // Override this in subclasses
     }
 
