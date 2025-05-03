@@ -1,0 +1,230 @@
+package jester;
+
+import java.util.*;
+
+/**
+ * A simple physics world that manages colliders and basic physics simulation.
+ * Designed to be easy to use for beginners while remaining extensible for advanced users.
+ */
+public class JesterPhysics {
+    private float gravityY;
+    private List<JesterCollider> colliders;
+    private Map<String, JesterCollisionClass> collisionClasses = new HashMap<>();
+    private boolean debugDraw;
+
+    /**
+     * Creates a new physics world
+     * @param gravityY The vertical gravity (positive is downward)
+     */
+    public JesterPhysics(float gravityY) {
+        this.gravityY = gravityY;
+        this.colliders = new ArrayList<>();
+        this.debugDraw = true;
+    }
+
+    /**
+     * Updates all colliders and checks for collisions
+     * @param dt Delta time since last update
+     */
+    public void update(float dt) {
+        // Update all colliders
+        for (JesterCollider collider : colliders) {
+            collider.update(dt);
+        }
+
+        // Check collisions
+        checkCollisions();
+    }
+
+    /**
+     * Adds a new collision class
+     * @param name The name of the collision class
+     */
+    public void addCollisionClass(String name) {
+        collisionClasses.put(name, new JesterCollisionClass(name));
+    }
+
+    /**
+     * Makes one collision class ignore another
+     * @param class1 The name of the first collision class
+     * @param class2 The name of the class to ignore
+     */
+    public void ignoreCollision(String class1, String class2) {
+        JesterCollisionClass c1 = collisionClasses.get(class1);
+        if (c1 != null) {
+            c1.ignore(class2);
+        }
+    }
+
+    private boolean shouldCollide(JesterCollider a, JesterCollider b) {
+        JesterCollisionClass classA = collisionClasses.get(a.getCollisionClass());
+        JesterCollisionClass classB = collisionClasses.get(b.getCollisionClass());
+
+        if (classA != null && classA.shouldIgnore(b.getCollisionClass())) return false;
+        if (classB != null && classB.shouldIgnore(a.getCollisionClass())) return false;
+
+        return true;
+    }
+
+    /**
+     * Draws all colliders (if debug drawing is enabled)
+     * @param g The graphics context
+     */
+    public void draw(JesterGraphics g) {
+        if (!debugDraw) return;
+        for (JesterCollider collider : colliders) {
+            collider.draw(g);
+        }
+    }
+
+    /**
+     * Creates a new rectangle collider
+     * @param x X position
+     * @param y Y position
+     * @param width Width of rectangle
+     * @param height Height of rectangle
+     * @return The created collider
+     */
+    public JesterCollider newRectangleCollider(float x, float y, float width, float height) {
+        JesterCollider collider = new JesterCollider(this, JesterCollider.Type.RECTANGLE, x, y, width, height);
+        colliders.add(collider);
+        return collider;
+    }
+
+    /**
+     * Creates a new circle collider
+     * @param x X position
+     * @param y Y position
+     * @param radius Radius of circle
+     * @return The created collider
+     */
+    public JesterCollider newCircleCollider(float x, float y, float radius) {
+        JesterCollider collider = new JesterCollider(this, JesterCollider.Type.CIRCLE, x, y, radius);
+        colliders.add(collider);
+        return collider;
+    }
+
+    /**
+     * Checks for collisions between all colliders
+     */
+    private void checkCollisions() {
+        for (int i = 0; i < colliders.size(); i++) {
+            for (int j = i + 1; j < colliders.size(); j++) {
+                JesterCollider a = colliders.get(i);
+                JesterCollider b = colliders.get(j);
+
+                // Add this line here, before checking collision
+                if (!shouldCollide(a, b)) continue;
+
+                if (checkCollisionBetween(a, b)) {
+                    handleCollision(a, b);
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks if two colliders are intersecting
+     */
+    private boolean checkCollisionBetween(JesterCollider a, JesterCollider b) {
+        return !(a.getX() + a.getWidth() < b.getX() ||
+                b.getX() + b.getWidth() < a.getX() ||
+                a.getY() + a.getHeight() < b.getY() ||
+                b.getY() + b.getHeight() < a.getY());
+    }
+
+    /**
+     * Handles collision between two colliders
+     */
+    private void handleCollision(JesterCollider a, JesterCollider b) {
+        // Skip if both are static
+        if (a.getBodyType() == JesterCollider.BodyType.STATIC &&
+                b.getBodyType() == JesterCollider.BodyType.STATIC) return;
+
+        // Calculate overlap
+        float overlapX = (a.getWidth() + b.getWidth()) / 2 -
+                Math.abs((a.getX() + a.getWidth()/2) -
+                        (b.getX() + b.getWidth()/2));
+        float overlapY = (a.getHeight() + b.getHeight()) / 2 -
+                Math.abs((a.getY() + a.getHeight()/2) -
+                        (b.getY() + b.getHeight()/2));
+
+        // Simple collision resolution
+        if (overlapX < overlapY) {
+            // Horizontal collision
+            if (a.getBodyType() == JesterCollider.BodyType.RIGID &&
+                    b.getBodyType() == JesterCollider.BodyType.RIGID) {
+                // Both are movable - move both
+                if (a.getX() < b.getX()) {
+                    a.setX(a.getX() - overlapX * 0.5f);
+                    b.setX(b.getX() + overlapX * 0.5f);
+                } else {
+                    a.setX(a.getX() + overlapX * 0.5f);
+                    b.setX(b.getX() - overlapX * 0.5f);
+                }
+            } else {
+                // One is immovable - move the movable one
+                JesterCollider movable = (a.getBodyType() == JesterCollider.BodyType.RIGID) ? a : b;
+                JesterCollider fixed = (a.getBodyType() == JesterCollider.BodyType.RIGID) ? b : a;
+
+                if (movable.getX() < fixed.getX()) {
+                    movable.setX(fixed.getX() - movable.getWidth());
+                } else {
+                    movable.setX(fixed.getX() + fixed.getWidth());
+                }
+            }
+        } else {
+            // Vertical collision
+            if (a.getBodyType() == JesterCollider.BodyType.RIGID &&
+                b.getBodyType() == JesterCollider.BodyType.RIGID) {
+                // Both are movable - move both
+                if (a.getY() < b.getY()) {
+                    a.setY(a.getY() - overlapY * 0.5f);
+                    b.setY(b.getY() + overlapY * 0.5f);
+                    transferPlatformMovement(b, a); // Transfer movement up
+                } else {
+                    a.setY(a.getY() + overlapY * 0.5f);
+                    b.setY(b.getY() - overlapY * 0.5f);
+                    transferPlatformMovement(b, a); // Transfer movement up
+                }
+                a.setVelocityY(0);
+                b.setVelocityY(0);
+            } else {
+                // One is immovable - move the movable one
+                JesterCollider movable = (a.getBodyType() == JesterCollider.BodyType.RIGID) ? a : b;
+                JesterCollider fixed = (a.getBodyType() == JesterCollider.BodyType.RIGID) ? b : a;
+
+                if (movable.getY() < fixed.getY()) {
+                    // Hitting the platform from above (landing)
+                    movable.setY(fixed.getY() - movable.getHeight());
+                    movable.setVelocityY(0);  // Stop falling
+                    //transferPlatformMovement(movable, movable);
+                    // If on a moving platform, move with it
+                    if (fixed.getBodyType() == JesterCollider.BodyType.KINEMATIC) {
+                        movable.setX(movable.getX() + fixed.getVelocityX() * 0.016f);
+                    }
+                } else {
+                    // Hitting the platform from below (bonking head)
+                    movable.setY(fixed.getY() + fixed.getHeight());
+                    if (movable.getVelocityY() < 0) {  // Only stop if moving upward
+                        movable.setVelocityY(0);
+                    }
+                }
+            }
+        }
+    }
+
+    // Calculate platform movement for any object on top of another
+    private void transferPlatformMovement(JesterCollider bottom, JesterCollider top) {
+        if (bottom.getBodyType() == JesterCollider.BodyType.KINEMATIC) {
+            // Direct platform movement
+            top.setX(top.getX() + bottom.getVelocityX() * 0.016f);
+        } else if (bottom.getBodyType() == JesterCollider.BodyType.RIGID) {
+            // Transfer movement from rigid body (which might be on a platform)
+            top.setX(top.getX() + bottom.getVelocityX() * 0.016f);
+        }
+    }
+
+    public float getGravityY() { return gravityY; }
+    public void setDebugDraw(boolean enabled) { this.debugDraw = enabled; }
+}

@@ -278,7 +278,7 @@ public class JesterGraphics {
         translate((float) Jester.window.getWidth() /2 - camera.getX(),
                 (float) Jester.window.getHeight() /2 - camera.getY());
     }
-    
+
     /**
      * Sets the default filter for JesterGraphics.
      * @param filter The filter to set.

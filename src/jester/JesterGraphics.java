@@ -2,6 +2,7 @@ package jester;
 
 import java.awt.*;
 import java.awt.geom.*;
+import java.util.Stack;
 
 /**
  * JesterGraphics provides methods for rendering 2D graphics in the Jester framework.
@@ -11,6 +12,7 @@ public class JesterGraphics {
     private Graphics2D g;
     private Font defaultFont; // Default font for text rendering
     private static JesterFilter defaultFilter = JesterFilter.VECTOR;
+    private Stack<AffineTransform> transformStack;
 
     /**
      * Constructor that initializes the default font.
@@ -25,6 +27,7 @@ public class JesterGraphics {
      */
     public void setGraphics(Graphics2D g) {
         this.g = g;
+        this.transformStack = new Stack<>();
         g.setFont(defaultFont); // Set the default font for the Graphics2D context
     }
 
@@ -34,6 +37,39 @@ public class JesterGraphics {
      */
     public Graphics2D getGraphics() {
         return g; // Return the stored Graphics2D context
+    }
+
+    /**
+     * Saves the current transformation state
+     */
+    public void push() {
+        transformStack.push(g.getTransform());
+    }
+
+    /**
+     * Restores the last saved transformation state
+     */
+    public void pop() {
+        if (!transformStack.isEmpty()) {
+            g.setTransform(transformStack.pop());
+        }
+    }
+
+    /**
+     * Rotates subsequent drawings by the specified angle in radians
+     * @param angle Rotation angle in radians
+     */
+    public void rotate(float angle) {
+        g.rotate(angle);
+    }
+
+    /**
+     * Scales subsequent drawings
+     * @param x Horizontal scale factor
+     * @param y Vertical scale factor
+     */
+    public void scale(float x, float y) {
+        g.scale(x, y);
     }
 
     /**

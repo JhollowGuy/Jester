@@ -1,0 +1,61 @@
+package jester;
+
+/**
+ * A class that manages layered scenes, allowing one scene to be rendered on top of another.
+ */
+public class JesterLayeredScene extends Scene {
+    private Scene baseScene;   // The main scene (e.g., GameScene)
+    private Scene overlayScene; // The overlay scene (e.g., PauseScene)
+
+    /**
+     * Constructor for creating a layered scene.
+     * @param base The base scene to be rendered.
+     * @param overlay The overlay scene to be rendered on top.
+     */
+    public JesterLayeredScene(Scene base, Scene overlay) {
+        this.baseScene = base;
+        this.overlayScene = overlay;
+    }
+
+    @Override
+    public void init() {
+        // Do NOT re-init the base scene; it's already running
+        overlayScene.init();  // Initialize the overlay scene
+    }
+
+    @Override
+    public void update(float dt) {
+        baseScene.update(dt); // Update the base scene
+        overlayScene.update(dt); // Update the overlay scene
+    }
+
+    @Override
+    public void render() {
+        baseScene.render();   // Render the base scene
+        overlayScene.render(); // Render the overlay scene on top
+    }
+
+    @Override
+    public void pause() {
+        baseScene.pause();    // Pause the base scene
+        overlayScene.pause();  // Pause the overlay scene
+    }
+
+    @Override
+    public void resume() {
+        baseScene.resume();    // Resume the base scene
+        overlayScene.resume();  // Resume the overlay scene
+    }
+
+    @Override
+    public void dispose() {
+        baseScene.dispose();    // Dispose of the base scene
+        overlayScene.dispose();  // Dispose of the overlay scene
+    }
+
+    @Override
+    public void handleInput(int keyCode, boolean pressed) {
+        baseScene.handleInput(keyCode, pressed); // Handle input for the base scene
+        overlayScene.handleInput(keyCode, pressed); // Handle input for the overlay scene
+    }
+}
